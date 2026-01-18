@@ -1,4 +1,8 @@
+import 'package:auth_app/src/features/auth/controller/auth_controller.dart';
+import 'package:auth_app/src/features/auth/view/login_view.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 class SignupView extends StatefulWidget {
   const SignupView({super.key});
@@ -84,26 +88,38 @@ class _SignupViewState extends State<SignupView> {
               const SizedBox(height: 24),
 
               // Signup Button
-              ElevatedButton(
-                onPressed: () {
-                  final name = _nameController.text;
-                  final email = _emailController.text;
-                  final password = _passwordController.text;
-                  print("Sign up with: $name / $email / $password");
-                  // TODO: Add your registration logic here
+              Consumer(
+                builder: (context, ref, child) {
+                  final loading = ref.watch(authControllerProvider);
+
+                  if (loading) {
+                    return Center(child: CircularProgressIndicator());
+                  }
+
+                  return ElevatedButton(
+                    onPressed: () {
+                      final name = _nameController.text;
+                      final email = _emailController.text;
+                      final password = _passwordController.text;
+                      print("Sign up with: $name / $email / $password");
+
+                      ref
+                          .read(authControllerProvider.notifier)
+                          .signup(email: email, password: password, name: name);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                    ),
+                    child: const Text('Sign Up'),
+                  );
                 },
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                ),
-                child: const Text('Sign Up'),
               ),
               const SizedBox(height: 16),
 
               // Navigation Link
               TextButton(
                 onPressed: () {
-                  // TODO: Pop back to LoginView
-                  Navigator.of(context).pop();
+                  context.go(LoginView.routePath);
                 },
                 child: const Text("Already have an account? Login"),
               ),

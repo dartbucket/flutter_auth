@@ -1,5 +1,5 @@
 class Endpoints {
   const Endpoints._();
 
-  static const baseUrl = "http://192.168.1.1:3000";
+  static const baseUrl = "http://10.85.89.139:3000";
 }
